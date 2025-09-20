@@ -9,7 +9,7 @@ ENV LD_LIBRARY_PATH=${CUDA_HOME}/lib64:${LD_LIBRARY_PATH}
 ENV USE_GPU=1
 ENV CUDA_VISIBLE_DEVICES=0
 
-WORKDIR /workspace-hku
+WORKDIR /quantch-2025
 
 # Install system dependencies (stable - cache this layer)
 RUN apt-get update && apt-get install -y \
@@ -49,11 +49,11 @@ RUN pip3 install --extra-index-url=https://pypi.nvidia.com \
 # Clone repos (changes frequently - put last)
 RUN --mount=type=secret,id=GITHUB_TOKEN \
     GITHUB_TOKEN=$(cat /run/secrets/GITHUB_TOKEN) && \
-    git clone https://$GITHUB_TOKEN@github.com/LevRoz630/hku-comp-fix.git /workspace-hku/hku-comp-fix && \
-    GIT_LFS_SKIP_SMUDGE=1 git clone https://$GITHUB_TOKEN@github.com/LevRoz630/hku-data.git /workspace-hku/hku-data
+    git clone https://$GITHUB_TOKEN@github.com/pavloShkur/quantchallenge-code.git /quantch-2025/quantchallenge-code && \
+    GIT_LFS_SKIP_SMUDGE=1 git clone https://$GITHUB_TOKEN@github.com/pavloShkur/data-quantch.git /quantch-2025/data-quantch
 
 # Pull LFS files (changes frequently - put last)
-RUN cd /workspace-hku/hku-data && \
+RUN cd /quantch-2025/data-quantch && \
     echo "Verifying Git LFS installation..." && \
     git lfs version && \
     echo "Starting LFS pull with retry logic..." && \
@@ -68,7 +68,7 @@ RUN cd /workspace-hku/hku-data && \
     git lfs ls-files
 
 # Install Python requirements (changes frequently - put last)
-RUN cd /workspace-hku/hku-comp-fix && \
+RUN cd /quantch-2025/quantchallenge-code && \
     git checkout main && \
     pip3 install -r requirements.txt
 
